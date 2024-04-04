@@ -17,3 +17,5 @@ Imports:
     sf,
     stringr,
     terra
+URL: https://github.com/Siedrid/gRasslands
+BugReports: https://github.com/Siedrid/gRasslands/issues
