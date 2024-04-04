@@ -10,12 +10,19 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
 Imports: 
+    caret,
     dplyr,
+    ggplot2,
+    ggpubr,
     magrittr,
     openxlsx,
     readxl,
     sf,
+    stats,
     stringr,
-    terra
+    terra,
+    tibble,
+    tidyr,
+    zoo
 URL: https://github.com/Siedrid/gRasslands
 BugReports: https://github.com/Siedrid/gRasslands/issues
