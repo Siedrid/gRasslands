@@ -18,7 +18,9 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of gRasslands is to ...
+This project is part of the SUSALPS research project, which is researching the sustainable use of alpine and pre-alpine grasslands in Southern Germany. A key indicator of ecosystem health is the floral biodiversity, which can be measured through indices like the species number or the shannon and simpson index (webpage with explanation?). The goal of this project was to estimate floral biodiverstiy at the help of Sentinel-2 reflectances between 2022 and 2023.
+This package provides the functions and code used to train a random forest model with the extracted reflectances at the sample plot locations. Species inventories sampled in the same plots served as response variable.
+Parts of the data are also available through this package.
 
 ## Installation
 
@@ -28,27 +30,51 @@ You can install the development version of gRasslands like so:
 # FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
 ```
 
-## Example
+## I. Data Preprocessing
 
-This is a basic example which shows you how to solve a common problem:
+In this section you find documentation how your data needs to be preprocessed to train your random forest model. This is shown at the hand of Sentinel-2 
+reflectances extracted at 60 plot locations in Lower Franconia, Bavaria.
 
-```{r example}
+```{r refl.df}
 library(gRasslands)
-## basic example code
+
+summary(refl.df)
+
+int.ts <- interpolate.ts(refl.df, plot.column = "plot_names")
+int.ts <- na.omit(int.ts)
+monthly_max.df <- comp_monthly(int.ts, date.column = "dat", stat = "max")
+monthly_max.df.piv <- pivot.df(monthly_max.df)
+
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+In the next step we take a look at the response variable: the alpha-diversity indices. Species inventories were collected in the same 60 plots. Both datasets are now processed together.
 
-```{r cars}
-summary(cars)
+```{r div.df}
+summary(div.df)
 ```
 
 You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this.
 
-You can also embed plots, for example:
 
-```{r pressure, echo = FALSE}
-plot(pressure)
+## II. Train and Test Random Forest
+
+```{r}
+
+m.nowinter <- c("03$", "04$", "05$", "06$","07$", "08$", "09$")
+data_frame.nowinter <- RF_predictors(monthly_max.df.piv, m.nowinter)
+rf_data <- preprocess_rf_data(data_frame.nowinter, div.df, "specn")
+
+train_index <- get_train_index(rf_data, s= 10)
+forest <- RF(rf_data, train_index = train_index, s= 123)
+print(forest)
+
+summarize.RF(forest, rf_data, div.df, train_index, "specn", plot_labels = F)
+#write.RF("no winter", "specn", forest, 10, csv.path)
 ```
 
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.
+## III. Spatial Prediction of Alpha-Diversity
+
+```{r}
+
+# write functions for spatial prediction and plotting first
+```
