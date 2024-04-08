@@ -18,9 +18,13 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-This project is part of the SUSALPS research project, which is researching the sustainable use of alpine and pre-alpine grasslands in Southern Germany. A key indicator of ecosystem health is the floral biodiversity, which can be measured through indices like the species number or the shannon and simpson index (webpage with explanation?). The goal of this project was to estimate floral biodiverstiy at the help of Sentinel-2 reflectances between 2022 and 2023.
+`gRasslands` is part of the SUSALPS research project (https://www.susalps.de/en/), which is researching the sustainable use of alpine and pre-alpine grasslands in Southern Germany. A key indicator of ecosystem health is the floral biodiversity, which can be measured through indices like the species number or the shannon and simpson index (webpage with explanation?). The goal of this project was to estimate floral diversity at the help of Sentinel-2 reflectances between 2022 and 2023.
 This package provides the functions and code used to train a random forest model with the extracted reflectances at the sample plot locations. Species inventories sampled in the same plots served as response variable.
 Parts of the data are also available through this package.
+
+
+Map of Study Area
+some logos somewhere?
 
 ## Installation
 
@@ -35,7 +39,7 @@ You can install the development version of gRasslands like so:
 In this section you find documentation how your data needs to be preprocessed to train your random forest model. This is shown at the hand of Sentinel-2 
 reflectances extracted at 60 plot locations in Lower Franconia, Bavaria.
 
-```{r refl.df, echo = FALSE}
+```{r refl.df}
 library(gRasslands)
 
 summary(refl.df)
@@ -44,7 +48,7 @@ summary(refl.df)
 
 The `refl.df` dataframe has a column for each Sentinel-2 band, and two additional columns for the plot names and date of the Sentinel-2 acquisition. In the following this data is brought into the right form to be processed in the random forest model. The data needs to be in a wide table format.
 
-```{r refl.df 2, echo = FALSE}
+```{r refl.df 2}
 int.ts <- interpolate.ts(refl.df, plot.column = "plot_names") # interpolate missing values
 int.ts <- na.omit(int.ts)
 monthly_max.df <- comp_monthly(int.ts, date.column = "dat", stat = "max") # composite to monthly maximum reflectances
@@ -55,6 +59,7 @@ monthly_max.df.piv <- pivot.df(monthly_max.df) # pivot the data into wide table
 In the next step we take a look at the response variable: the alpha-diversity indices. Species inventories were collected in the same 60 plots. Both datasets are processed together in step II.
 
 ```{r div.df}
+# get_diversity(...)
 summary(div.df)
 ```
 
@@ -67,7 +72,7 @@ You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-da
 
 For the training only the maximum reflectances from the months March to September are used. The winter months are influenced by clouds and are limited by less acquisitions, which could potentially influence our results negatively.
 
-```{r Random Forest, echo = FALSE}
+```{r Random Forest}
 
 m.nowinter <- c("03$", "04$", "05$", "06$","07$", "08$", "09$")
 data_frame.nowinter <- RF_predictors(monthly_max.df.piv, m.nowinter) # use only months from March to September
@@ -78,16 +83,30 @@ forest <- RF(rf_data, train_index = train_index, s = 10) # train Random Forest
 print(forest)
 ```
 
-Training and testing results are visualized in a scatter plot with the predicted species number on the x-axis and the actual species number on the y-axis. Further statistics can be written to a csv file with the function `write.RF`.
+Training and testing results are visualized in a scatter plot with the actual species number on the x-axis and the predicted species number on the y-axis. Further statistics can be written to a csv file with the function `write.RF`.
 
-```{r Random Forest 2, echo = FALSE}
+```{r Random Forest 2}
 summarize.RF(forest, rf_data, div.df, train_index, "specn", plot_labels = F) # returns scatter plot
 #write.RF("no winter", "specn", forest, 10, csv.path)
 ```
 
+
+```{r Variable Importance}
+
+plt.varimp(forest)
+
+```
 ## III. Spatial Prediction of Alpha-Diversity
 
-```{r}
+For the spatial prediction, all variables, that trained the random forest, need to be stacked to a spatial Raster, on which the species number can be predicted. In the case of the random forest trained with all summer months, the monthly maximum raster composites of all acquisitions from March until September 2022 and 2023 respectively need to be calculated first. Due to the limited storage capacity, these raster composites can't be part of this package. On request, we can make these composites available. The code to calculate spatial rasters is provided in the following.
+
+```{r Spatial Prediction Preprocessing}
 
 # write functions for spatial prediction and plotting first
 ```
+
+
+## IV. Further Resources
+
+Workflow of Paper
+Contact Details
