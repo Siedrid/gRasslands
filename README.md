@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# gRasslands <img align="right" src="man/figures/logo_susalps_kl.jpg" alt="SUSALPS Logo" style="width: 400px;"/>
+# gRasslands <a href="https://www.susalps.de/en/"><img align="right" src="man/figures/logo_susalps_kl.jpg" alt="SUSALPS Logo" />
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -21,12 +21,12 @@ package.
 
 Map of Study Area some logos somewhere?
 
-## Installation
+## 0. Installation
 
-You can install the development version of gRasslands like so:
+You can install the development version of gRasslands via `devtools`:
 
 ``` r
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
+devtools::install_github("Siedrid/gRasslands")
 ```
 
 ## I. Data Preprocessing
@@ -36,9 +36,12 @@ preprocessed to train your random forest model. This is shown at the
 hand of Sentinel-2 surface reflectances extracted at 60 plot locations
 in Lower Franconia, Bavaria. The Sentinel-2 scenes were atmospherically
 corrected using the MAJA processor (<https://www.cesbio.cnrs.fr/maja/>).
-The Sentinel-2 Level 2A product is for some areas freely distributed on
-the THEIA portal:
+For some areas Sentinel-2 L2A products (MAJA preprocessed) are freely
+distributed on the THEIA portal:
 <https://theia.cnes.fr/atdistrib/rocket/#/search?collection=SENTINEL2>
+Of course, also the Sentinel-2 L2A products distributed via the
+Copernicus Browser or the Google Earth Engine are suitable for this
+analysis.
 
 ``` r
 library(gRasslands)
@@ -81,7 +84,7 @@ forest model.
 ``` r
 int.ts <- interpolate.ts(refl.df, plot.column = "plot_names") # interpolate missing values
 int.ts <- na.omit(int.ts)
-monthly_max.df <- comp_monthly(int.ts, date.column = "dat", stat = "max") # composite to monthly maximum reflectances
+monthly_max.df <- comp_monthly(int.ts, date.column = "dat", stat = "min") # composite to monthly maximum reflectances
 monthly_max.df.piv <- pivot.df(monthly_max.df) # pivot the data into wide table
 ```
 
@@ -91,7 +94,7 @@ alpha-diversity indices. Species inventories were collected in the same
 together in step II.
 
 ``` r
-# get_diversity(...)
+# plot of map with shapefile
 summary(div.df)
 #>   plot_names           shannon          simpson           specn      
 #>  Length:60          Min.   :0.8192   Min.   :0.2763   Min.   :15.00  
@@ -100,6 +103,7 @@ summary(div.df)
 #>                     Mean   :2.3205   Mean   :0.7863   Mean   :32.22  
 #>                     3rd Qu.:2.7361   3rd Qu.:0.8916   3rd Qu.:37.25  
 #>                     Max.   :3.5101   Max.   :0.9529   Max.   :52.00
+#div.sf <- div2sf(div.df, x.column = "X", y.column = "Y",epsg_code = 25832)
 ```
 
 The alpha diversity indices used are the species number, shannon and
@@ -107,9 +111,6 @@ simpson index. Many studies have shown, that species number is the best
 response variable, therefore this alpha-diversity indice will be used in
 the following random forest model. The code to calculate these indices
 is provided in the `data-raw` folder.
-
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this.
 
 ## II. Train and Test Random Forest
 
@@ -119,13 +120,15 @@ limited by less acquisitions, which could potentially impact our results
 negatively.
 
 ``` r
+s = 91
+biodiv_ind = "specn"
 
 m.nowinter <- c("03$", "04$", "05$", "06$","07$", "08$", "09$")
 data_frame.nowinter <- RF_predictors(monthly_max.df.piv, m.nowinter) # use only months from March to September
-rf_data <- preprocess_rf_data(data_frame.nowinter, div.df, "specn") # merge reflectance and alpha diversity dataframe
+rf_data <- preprocess_rf_data(data_frame.nowinter, div.df, biodiv_ind) # merge reflectance and alpha diversity dataframe
 
-train_index <- get_train_index(rf_data, s = 10) # split samples into training and testing (70:30)
-forest <- RF(rf_data, train_index = train_index, s = 10) # train Random Forest
+train_index <- get_train_index(rf_data, s = s) # split samples into training and testing (70:30)
+forest <- RF(rf_data, train_index = train_index, s = s) # train Random Forest
 #> Lade nötiges Paket: ggplot2
 #> Lade nötiges Paket: lattice
 print(forest)
@@ -136,20 +139,20 @@ print(forest)
 #> 
 #> No pre-processing
 #> Resampling: Cross-Validated (10 fold, repeated 5 times) 
-#> Summary of sample sizes: 40, 39, 39, 39, 38, 39, ... 
+#> Summary of sample sizes: 38, 38, 40, 39, 40, 38, ... 
 #> Resampling results across tuning parameters:
 #> 
 #>   mtry  RMSE      Rsquared   MAE     
-#>     2   5.189678  0.7091475  4.223472
-#>    25   4.971855  0.6854268  4.234894
-#>    48   5.011213  0.6817031  4.292484
-#>    71   5.047436  0.6754444  4.328216
-#>    94   5.067761  0.6744548  4.354348
-#>   117   5.090105  0.6728903  4.377323
-#>   140   5.151373  0.6663269  4.441661
+#>     2   5.212698  0.7680533  4.075929
+#>    25   5.307270  0.7299904  4.297927
+#>    48   5.341733  0.7183568  4.353222
+#>    71   5.399386  0.7100851  4.409252
+#>    94   5.439054  0.7046677  4.450530
+#>   117   5.481573  0.6931790  4.479744
+#>   140   5.470326  0.7015584  4.472773
 #> 
 #> RMSE was used to select the optimal model using the smallest value.
-#> The final value used for the model was mtry = 25.
+#> The final value used for the model was mtry = 2.
 ```
 
 In the output of the `forest` variable, it is summarized that 43 samples
@@ -165,7 +168,7 @@ methods, and month combinations or running the model multiple times with
 different seeds.
 
 ``` r
-summarize.RF(forest, rf_data, div.df, train_index, "specn", plot_labels = F) # returns scatter plot
+RF.summary(forest, rf_data, div.df, train_index, "specn", plot_labels = F) # returns scatter plot
 ```
 
 <img src="man/figures/README-Random Forest 2-1.png" width="70%" />
@@ -210,15 +213,24 @@ spatial predictions is provided in the following.
 
 # select months as predictors 
 m <- c("03.tif", "04.tif", "05.tif", "06.tif","07.tif", "08.tif", "09.tif")
-#fls <- list_comp_months(comp_path, m)
+comp_path <- "E:/Grasslands_BioDiv/Data/S2_min_composites"
+fls <- list_comp_months(comp_path, m)
 
-#max.brick <- stack_S2_months(fls, comp_path, m, "G:/Grasslands_BioDiv/Data/SpatialRF_Data/Monthly_Maximum_comp-nowinter2.tif")
+max.brick <- stack_S2_months(fls, comp_path)
 
-#s2_pred <- terra::predict(max_comp.brick, model = forest, na.rm = T)
-#s2_pred.masked <- mask.grasslands(s2_pred, grass.mask)
+s2_pred <- terra::predict(max.brick, model = forest, na.rm = T)
 
-#plt.diversity(s2_pred.masked)
+# Mask non-Grasslands with Copernicus Grassland Layer
+grass.mask.path <- "E:/Grasslands_BioDiv/Data/Copernicus_Grassland/GRA_2018_010m_03035_V1_0.tif"
+grass.mask <- terra::rast(grass.mask.path)
+
+s2_pred.masked <- mask.grasslands(s2_pred, grass.mask)
+#> |---------|---------|---------|---------|=========================================                                          |---------|---------|---------|---------|=========================================                                          
+
+plt.diversity(s2_pred.masked, biodiv_ind = "specn")
 ```
+
+<img src="man/figures/README-Spatial Prediction Preprocessing-1.png" width="70%" />
 
 `comp_path` is the path to the directory, where the monthly raster
 composites are stored. After creating a list of these raster composites,
@@ -236,6 +248,11 @@ Exploratories Information System: <https://www.bexis.uni-jena.de/> This
 is an important step towards a broader understanding of grassland sites,
 how to manage them and protect their valuable ecosystem services.
 
-![Worflow of
-Analysis](man/figures/GrasslandsBiodiv_Flowchart.drawio.png) Contact
-Details
+<img src="man/figures/GrasslandsBiodiv_Flowchart.drawio.png" alt="Analysis Workflow" style="width: 400px;"/>
+
+### Literature:
+
+### Contact Details:
+
+Laura Obrecht: <laura.obrecht@stud-mail.uni-wuerzburg.de> Dr. Sophie
+Reinermann: <sophie.reinermann@dlr.de>
