@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# gRasslands
+# gRasslands <img align="right" src="man/figures/logo_susalps_kl.jpg" alt="SUSALPS Logo" style="width: 400px;"/>
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -33,8 +33,12 @@ You can install the development version of gRasslands like so:
 
 In this section you find documentation how your data needs to be
 preprocessed to train your random forest model. This is shown at the
-hand of Sentinel-2 reflectances extracted at 60 plot locations in Lower
-Franconia, Bavaria.
+hand of Sentinel-2 surface reflectances extracted at 60 plot locations
+in Lower Franconia, Bavaria. The Sentinel-2 scenes were atmospherically
+corrected using the MAJA processor (<https://www.cesbio.cnrs.fr/maja/>).
+The Sentinel-2 Level 2A product is for some areas freely distributed on
+the THEIA portal:
+<https://theia.cnes.fr/atdistrib/rocket/#/search?collection=SENTINEL2>
 
 ``` r
 library(gRasslands)
@@ -68,9 +72,11 @@ summary(refl.df)
 
 The `refl.df` dataframe has a column for each Sentinel-2 band, and two
 additional columns for the plot names and date of the Sentinel-2
-acquisition. In the following this data is brought into the right form
-to be processed in the random forest model. The data needs to be in a
-wide table format.
+acquisition. You can find the code to extract create this data frame in
+`data-raw/refl.df.R`. The functions used in the refl.df.R script are
+also provided within this package. In the following the `refl.df` data
+frame is brought into the right form to be processed in the random
+forest model.
 
 ``` r
 int.ts <- interpolate.ts(refl.df, plot.column = "plot_names") # interpolate missing values
@@ -81,7 +87,8 @@ monthly_max.df.piv <- pivot.df(monthly_max.df) # pivot the data into wide table
 
 In the next step we take a look at the response variable: the
 alpha-diversity indices. Species inventories were collected in the same
-60 plots. Both datasets are processed together in step II.
+60 plots in May 2022 and April 2023. Both datasets are processed
+together in step II.
 
 ``` r
 # get_diversity(...)
@@ -106,10 +113,10 @@ up-to-date. `devtools::build_readme()` is handy for this.
 
 ## II. Train and Test Random Forest
 
-For the training only the maximum reflectances from the months March to
+For the training, only the maximum reflectances from the months March to
 September are used. The winter months are influenced by clouds and are
-limited by less acquisitions, which could potentially influence our
-results negatively.
+limited by less acquisitions, which could potentially impact our results
+negatively.
 
 ``` r
 
@@ -145,28 +152,48 @@ print(forest)
 #> The final value used for the model was mtry = 25.
 ```
 
-Training and testing results are visualized in a scatter plot with the
-actual species number on the x-axis and the predicted species number on
-the y-axis. Further statistics can be written to a csv file with the
-function `write.RF`.
+In the output of the `forest` variable, it is summarized that 43 samples
+were used for the training (i.e. 70% of the dataset) and 140 predictors
+(i.e. 10 bands x 2 years x 7 months). Per default a cross-validation
+with 10 folds and 5 repeats is used. The forest with the highest R2 and
+the lowest RMSE is returned in the end. Training and testing results are
+visualized in a scatter plot with the actual species number on the
+x-axis and the predicted species number on the y-axis. Further
+statistics can be summarized in a csv file with the function `write.RF`.
+This function is especially usefull, when testing different compositing
+methods, and month combinations or running the model multiple times with
+different seeds.
 
 ``` r
 summarize.RF(forest, rf_data, div.df, train_index, "specn", plot_labels = F) # returns scatter plot
 ```
 
-<img src="man/figures/README-Random Forest 2-1.png" width="100%" />
+<img src="man/figures/README-Random Forest 2-1.png" width="70%" />
 
 ``` r
 #write.RF("no winter", "specn", forest, 10, csv.path)
 ```
+
+Species Numbers between 20 and 40 have the highest accuracy. Lower and
+higher species numbers are over and underestimated, respecitively, due
+to the limited sample number with these numbers. The R2 is given for the
+training and testing split. The testing split was not used to train the
+random forest model. With `plot_labels = T`, the points are labeled
+according to their plot names.
 
 ``` r
 
 plt.varimp(forest)
 ```
 
-<img src="man/figures/README-Variable Importance-1.png" width="100%" />
-\## III. Spatial Prediction of Alpha-Diversity
+<img src="man/figures/README-Variable Importance-1.png" width="70%" />
+
+`plt.varimp` is an important function to evaluate the predictors
+according to their band, year and month. The SWIR bands and B4 and B5
+are the most important Sentinel-2 bands (A). March is by far the most
+important month in the prediction (D).
+
+## III. Spatial Prediction of Alpha-Diversity
 
 For the spatial prediction, all variables, that trained the random
 forest, need to be stacked to a spatial Raster, on which the species
@@ -174,15 +201,41 @@ number can be predicted. In the case of the random forest trained with
 all summer months, the monthly maximum raster composites of all
 acquisitions from March until September 2022 and 2023 respectively need
 to be calculated first. Due to the limited storage capacity, these
-raster composites can’t be part of this package. On request, we can make
-these composites available. The code to calculate spatial rasters is
-provided in the following.
+raster composites can’t be part of this package. The code to calculate
+these raster composites is provided in the `data-raw` folder. On
+request, we can make these composites available. The code to calculate
+spatial predictions is provided in the following.
 
 ``` r
 
-# write functions for spatial prediction and plotting first
+# select months as predictors 
+m <- c("03.tif", "04.tif", "05.tif", "06.tif","07.tif", "08.tif", "09.tif")
+#fls <- list_comp_months(comp_path, m)
+
+#max.brick <- stack_S2_months(fls, comp_path, m, "G:/Grasslands_BioDiv/Data/SpatialRF_Data/Monthly_Maximum_comp-nowinter2.tif")
+
+#s2_pred <- terra::predict(max_comp.brick, model = forest, na.rm = T)
+#s2_pred.masked <- mask.grasslands(s2_pred, grass.mask)
+
+#plt.diversity(s2_pred.masked)
 ```
+
+`comp_path` is the path to the directory, where the monthly raster
+composites are stored. After creating a list of these raster composites,
+the rasters are stacked with the terra package and then transformed into
+a brick object. With `predict`, the random forest model `forest` is
+applied to the brick.
 
 ## IV. Further Resources
 
-Workflow of Paper Contact Details
+In the following, the entire workflow of the analysis is visualized.
+This package was designed to encourage a similar analysis at grassland
+sites, where species inventories are available. A valuable database for
+such inventories and environmental parameters is also the Biodiversity
+Exploratories Information System: <https://www.bexis.uni-jena.de/> This
+is an important step towards a broader understanding of grassland sites,
+how to manage them and protect their valuable ecosystem services.
+
+![Worflow of
+Analysis](man/figures/GrasslandsBiodiv_Flowchart.drawio.png) Contact
+Details
