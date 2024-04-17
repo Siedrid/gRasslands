@@ -23,10 +23,6 @@ knitr::opts_chunk$set(
 This package provides the functions and code used to train a random forest model with the extracted reflectances at the sample plot locations. Species inventories sampled in the same plots served as response variable.
 Parts of the data are also available through this package.
 
-
-Map of Study Area
-some logos somewhere?
-
 ## 0. Installation
 
 You can install the development version of gRasslands via `devtools`:
@@ -47,7 +43,7 @@ summary(refl.df)
 
 ```
 
-The `refl.df` dataframe has a column for each Sentinel-2 band, and two additional columns for the plot names and date of the Sentinel-2 acquisition. You can find the code to extract create this data frame in `data-raw/refl.df.R`. The functions used in the refl.df.R script are also provided within this package. In the following the `refl.df` data frame is brought into the right form to be processed in the random forest model.
+Reflectances at the plot locations and in each Sentinel-2 band from 2022 to 2023 were already extracted and are stored in the `refl.df` data frame. The `refl.df` data frame has a column for each Sentinel-2 band, and two additional columns for the plot names and date of the Sentinel-2 acquisition. You can find the code to create this data frame in `data-raw/refl.df.R`. The functions used in the refl.df.R script are also provided within this package. In the following the `refl.df` data frame is brought into the right form to be processed in the random forest model.
 
 ```{r refl.df 2}
 int.ts <- interpolate.ts(refl.df, plot.column = "plot_names") # interpolate missing values
@@ -57,12 +53,18 @@ monthly_max.df.piv <- pivot.df(monthly_max.df) # pivot the data into wide table
 
 ```
 
-In the next step we take a look at the response variable: the alpha-diversity indices. Species inventories were collected in the same 60 plots in May 2022 and April 2023. Both datasets are processed together in step II.
+In the next step we take a look at the response variable: the alpha-diversity indices. Species inventories were collected in the same 60 plots in May 2022 and April 2023. Both datasets are processed together in step II. With `get_cover`, the cloud cover, i.e. the percentage of the masked area of one acquisition inside the study area is returned. With `plt.band_composite`, an RGB band composite of the study area can be plotted and the plot locations added.
 
 ```{r div.df}
-# plot of map with shapefile
 summary(div.df)
-#div.sf <- div2sf(div.df, x.column = "X", y.column = "Y",epsg_code = 25832)
+
+study_area <- get_study_area(div.df, "X", "Y")
+div.sf <- div2sf(div.df, x.column = "X", y.column = "Y", epsg.code = 25832, write = F)
+
+acq <- get_acquisitions("2022", "04", "E:/Grasslands_Biodiv/Data/SatData/")[1]
+cloud_cover <- get_cover(acq, study_area) # calculate cloud cover
+
+plt.band_composite(acq, bands = c("B2", "B3", "B4"), study_area, df = div.df, add.plots = T)
 
 ```
 
@@ -71,7 +73,7 @@ The alpha diversity indices used are the species number, shannon and simpson ind
 
 ## II. Train and Test Random Forest
 
-For the training, only the maximum reflectances from the months March to September are used. The winter months are influenced by clouds and are limited by less acquisitions, which could potentially impact our results negatively.
+For the training, only the maximum reflectances from the months March to September are used. The winter months are influenced by clouds and snow and are limited by less plant growth/cover, which could potentially impact our results negatively.
 
 ```{r Random Forest}
 s = 91
@@ -145,4 +147,5 @@ This is an important step towards a broader understanding of grassland sites, ho
 ### Contact Details:
 
 Laura Obrecht: laura.obrecht@stud-mail.uni-wuerzburg.de
+
 Dr. Sophie Reinermann: sophie.reinermann@dlr.de

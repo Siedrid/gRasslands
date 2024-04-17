@@ -19,8 +19,6 @@ locations. Species inventories sampled in the same plots served as
 response variable. Parts of the data are also available through this
 package.
 
-Map of Study Area some logos somewhere?
-
 ## 0. Installation
 
 You can install the development version of gRasslands via `devtools`:
@@ -73,9 +71,11 @@ summary(refl.df)
 #>  NA's   :8449    NA's   :8449    NA's   :8449
 ```
 
-The `refl.df` dataframe has a column for each Sentinel-2 band, and two
-additional columns for the plot names and date of the Sentinel-2
-acquisition. You can find the code to extract create this data frame in
+Reflectances at the plot locations and in each Sentinel-2 band from 2022
+to 2023 were already extracted and are stored in the `refl.df` data
+frame. The `refl.df` data frame has a column for each Sentinel-2 band,
+and two additional columns for the plot names and date of the Sentinel-2
+acquisition. You can find the code to create this data frame in
 `data-raw/refl.df.R`. The functions used in the refl.df.R script are
 also provided within this package. In the following the `refl.df` data
 frame is brought into the right form to be processed in the random
@@ -91,20 +91,41 @@ monthly_max.df.piv <- pivot.df(monthly_max.df) # pivot the data into wide table
 In the next step we take a look at the response variable: the
 alpha-diversity indices. Species inventories were collected in the same
 60 plots in May 2022 and April 2023. Both datasets are processed
-together in step II.
+together in step II. With `get_cover`, the cloud cover, i.e. the
+percentage of the masked area of one acquisition inside the study area
+is returned. With `plt.band_composite`, an RGB band composite of the
+study area can be plotted and the plot locations added.
 
 ``` r
-# plot of map with shapefile
 summary(div.df)
 #>   plot_names           shannon          simpson           specn      
-#>  Length:60          Min.   :0.8192   Min.   :0.2763   Min.   :15.00  
-#>  Class :character   1st Qu.:1.9584   1st Qu.:0.7237   1st Qu.:27.00  
-#>  Mode  :character   Median :2.3325   Median :0.8255   Median :32.00  
-#>                     Mean   :2.3205   Mean   :0.7863   Mean   :32.22  
-#>                     3rd Qu.:2.7361   3rd Qu.:0.8916   3rd Qu.:37.25  
-#>                     Max.   :3.5101   Max.   :0.9529   Max.   :52.00
-#div.sf <- div2sf(div.df, x.column = "X", y.column = "Y",epsg_code = 25832)
+#>  Length:59          Min.   :0.8192   Min.   :0.2763   Min.   :15.00  
+#>  Class :character   1st Qu.:1.9472   1st Qu.:0.7213   1st Qu.:27.00  
+#>  Mode  :character   Median :2.3466   Median :0.8244   Median :32.00  
+#>                     Mean   :2.3232   Mean   :0.7852   Mean   :32.44  
+#>                     3rd Qu.:2.7362   3rd Qu.:0.8921   3rd Qu.:37.50  
+#>                     Max.   :3.5101   Max.   :0.9529   Max.   :52.00  
+#>        X                Y          
+#>  Min.   :677759   Min.   :5528198  
+#>  1st Qu.:678610   1st Qu.:5528541  
+#>  Median :679250   Median :5528797  
+#>  Mean   :680548   Mean   :5529222  
+#>  3rd Qu.:684102   3rd Qu.:5529788  
+#>  Max.   :685066   Max.   :5530580
+
+study_area <- get_study_area(div.df, "X", "Y")
+div.sf <- div2sf(div.df, x.column = "X", y.column = "Y", epsg.code = 25832, write = F)
+
+acq <- get_acquisitions("2022", "04", "E:/Grasslands_Biodiv/Data/SatData/")[1]
+cloud_cover <- get_cover(acq, study_area) # calculate cloud cover
+#> Cloud Cover is 8.53%
+
+plt.band_composite(acq, bands = c("B2", "B3", "B4"), study_area, df = div.df, add.plots = T)
 ```
+
+<img src="man/figures/README-div.df-1.png" width="70%" />
+
+    #> NULL
 
 The alpha diversity indices used are the species number, shannon and
 simpson index. Many studies have shown, that species number is the best
@@ -115,9 +136,9 @@ is provided in the `data-raw` folder.
 ## II. Train and Test Random Forest
 
 For the training, only the maximum reflectances from the months March to
-September are used. The winter months are influenced by clouds and are
-limited by less acquisitions, which could potentially impact our results
-negatively.
+September are used. The winter months are influenced by clouds and snow
+and are limited by less plant growth/cover, which could potentially
+impact our results negatively.
 
 ``` r
 s = 91
@@ -254,5 +275,6 @@ how to manage them and protect their valuable ecosystem services.
 
 ### Contact Details:
 
-Laura Obrecht: <laura.obrecht@stud-mail.uni-wuerzburg.de> Dr. Sophie
-Reinermann: <sophie.reinermann@dlr.de>
+Laura Obrecht: <laura.obrecht@stud-mail.uni-wuerzburg.de>
+
+Dr. Sophie Reinermann: <sophie.reinermann@dlr.de>

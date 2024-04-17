@@ -14,8 +14,10 @@ Imports:
     dplyr,
     ggplot2,
     ggpubr,
+    ggspatial,
     magrittr,
     openxlsx,
+    raster,
     readxl,
     sf,
     stats,
@@ -23,6 +25,7 @@ Imports:
     terra,
     tibble,
     tidyr,
+    tidyterra,
     zoo
 URL: https://github.com/Siedrid/gRasslands
 BugReports: https://github.com/Siedrid/gRasslands/issues
