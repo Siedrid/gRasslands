@@ -1,6 +1,6 @@
 #' Scatter Plot of Alpha Diversity Prediction
 #'
-#' `summarize.RF` returns a ggplot scatter plot of the predicted vs. sampled alpha diversity per plot location.
+#' `RF.summary` returns a ggplot scatter plot of the predicted vs. sampled alpha diversity per plot location.
 #' The training and testing splits are visualized as well as the individual R2.
 #'
 #' @param forest Random Forest train object.
@@ -15,7 +15,7 @@
 #'
 #' @export
 
-summarize.RF <- function(forest, rf_data, div_df, train_index, biodiv_index, plot_labels = T){
+RF.summary <- function(forest, rf_data, div_df, train_index, biodiv_index, plot_labels = T){
   # Visualization of model prediction
   train.res <- forest$trainingData['.outcome']
   train.res$predicted <- unname(forest$finalModel$predicted)

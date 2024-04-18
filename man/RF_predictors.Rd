@@ -9,7 +9,7 @@ RF_predictors(data_frame, m_lst)
 \arguments{
 \item{data_frame}{monthly S-2 reflectance data frame.}
 
-\item{m_lst}{vector of the months to be used in the prediction.}
+\item{m_lst}{vector of the months to be used in the prediction, e.g. c(3:9) for March until September.}
 }
 \value{
 A data frame.

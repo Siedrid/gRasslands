@@ -7,7 +7,7 @@
 load_mask(res, mask_path, study_area)
 }
 \arguments{
-\item{res}{resolution of the S-2 band which needs to be masked.}
+\item{res}{resolution of the S-2 band which needs to be masked, either 10 or 20.}
 
 \item{mask_path}{path to S-2 masks}
 

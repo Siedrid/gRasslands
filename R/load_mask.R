@@ -3,7 +3,7 @@
 #' `load_mask` returns the Sentinel-2 masks to mask clouds etc. from the satellite image.
 #'
 #' @param mask_path path to S-2 masks
-#' @param res resolution of the S-2 band which needs to be masked.
+#' @param res resolution of the S-2 band which needs to be masked, either 10 or 20.
 #' @param study_area sf object of bounding box of study area
 #'
 #' @return A SpatialRaster, terra object with true and false.

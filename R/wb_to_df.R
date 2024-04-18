@@ -1,14 +1,10 @@
-#' Convert Workbook to Dataframe
+#' Convert Excel Workbook to data frame
 #'
 #' `wb_to_df` converts the excel workbook containing the plot reflectances into a dataframe.
 #'
 #' @param wb_path path to the excel workbook.
 #'
-#' @return A dataframe with columns S-2 bands and acquisition date.
-#' @examples
-#'
-#' wb_path <- "E:/Grasslands_BioDiv/Data/S2_Reflectances/reflectances_plot_center-v1.xlsx"
-#' refl.df <- wb_to_df(wb_path)
+#' @return A data frame with S-2 bands and acquisition date as columns.
 #'
 #' @export
 

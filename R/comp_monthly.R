@@ -2,11 +2,11 @@
 #'
 #' `comp_monthly` composites S-2 time series to monthly reflectances.
 #'
-#' @param df dataframe (interpolated) with the plot reflectance.
-#' @param date.column name of the column storing the acquisition dates.
+#' @param df data frame (interpolated) with the at plot reflectance.
+#' @param date.column column name storing the acquisition dates.
 #' @param stat statistic to use for compositing, e.g. max, min, mean.
 #'
-#' @return A dataframe of monthly S-2 reflectances.
+#' @return A data frame of monthly S-2 reflectances.
 #'
 #' @export
 comp_monthly <- function(df, date.column, stat){

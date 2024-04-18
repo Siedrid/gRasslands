@@ -7,13 +7,13 @@
 interpolate.ts(df, plot.column)
 }
 \arguments{
-\item{df}{dataframe with the plot reflectance.}
+\item{df}{data frame with the plot reflectance.}
 
 \item{plot.column}{name of the column storing the plot names.}
 }
 \value{
-A dataframe with columns S-2 bands and acquisition date, with interpolated NA values.
+A data frame with columns S-2 bands and acquisition date, with interpolated NA values.
 }
 \description{
-\code{interpolate.ts} interpolates missing values in the dataframe.
+\code{interpolate.ts} interpolates missing values in the data frame.
 }

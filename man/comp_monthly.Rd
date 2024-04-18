@@ -7,14 +7,14 @@
 comp_monthly(df, date.column, stat)
 }
 \arguments{
-\item{df}{dataframe (interpolated) with the plot reflectance.}
+\item{df}{data frame (interpolated) with the at plot reflectance.}
 
-\item{date.column}{name of the column storing the acquisition dates.}
+\item{date.column}{column name storing the acquisition dates.}
 
 \item{stat}{statistic to use for compositing, e.g. max, min, mean.}
 }
 \value{
-A dataframe of monthly S-2 reflectances.
+A data frame of monthly S-2 reflectances.
 }
 \description{
 \code{comp_monthly} composites S-2 time series to monthly reflectances.

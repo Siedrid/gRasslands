@@ -1,6 +1,6 @@
 #' Preprocess Random Forest Input Data
 #'
-#' `preprocess_rf_data` returns dataframe ready for training and testing the random forest model
+#' `preprocess_rf_data` returns data frame ready for training and testing the random forest model
 #'
 #' @param refl_df data frame with the monthly Sentinel-2 reflectances at plot locations.
 #' @param div_df data frame with the alpha diversity indices at plot locations, predictor variables.

@@ -1,13 +1,13 @@
 #' Load masked Sentinel-2 Band from one acquisition
 #'
-#' `load_band` returns the Sentinel-2 masks to mask clouds etc. from the satellite image.
+#' `load_band` returns the Sentinel-2 band, cloud masked and with the reflectance as the pixel values.
 #'
-#' @param band Sentinel-2 band (character)
-#' @param acq path to the S2 acquisition
+#' @param band Sentinel-2 band (character), e.g. "B3".
+#' @param acq path to the S-2 acquisition
 #' @param m SpatialRaster of corresponding mask in matching spatial resolution
 #' @param study_area sf object of bounding box of study area
 #'
-#' @return A character vector of path to the two masks for the 10m and 20m bands.
+#' @return SpatRaster of the S-2 reflectances in the study area.
 #'
 #' @export
 

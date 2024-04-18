@@ -4,20 +4,20 @@
 \alias{get_acquisitions}
 \title{Get S-2 Acquisition paths}
 \usage{
-get_acquisitions(year, month, wd)
+get_acquisitions(year, month, sat_directory)
 }
 \arguments{
 \item{year}{string, indicating the year of the acquisitions}
 
 \item{month}{string, indicating the month, two characters, e.g. "01","02",..., "12"}
 
-\item{wd}{directory where the satellite data is stored}
+\item{sat_directory}{directory where the satellite data is stored}
 }
 \value{
-A character vector of the acquisiton paths for a specific year and month, used to load S2 masks and bands.
+A character vector of the acquisiton paths for a specific year and month, used to load S-2 masks and bands.
 }
 \description{
-\code{get_acquisitions} returns the acquisiton paths for specific year and month, used to load S2 masks and bands
+\code{get_acquisitions} returns the acquisiton paths for a specific year and month, used to load S-2 masks and bands
 }
 \examples{
 

@@ -7,9 +7,9 @@
 #' @param y.column name of the column with y-coordinates
 #'
 #' @return A bounding box (sf object) of the study area.
+#'
 #' @examples
-#' df <- readxl::read_excel(path = "E:/Grasslands_BioDiv/Data/Field_Data/SUSALPS_samplingData_BT-RB-FE_2022-2023.xlsx")
-#' study_area <- get_study_area(df, "PlotCenter_x_coord", "PlotCenter_y_coord")
+#' study_area <- get_study_area(div.df, "X", "Y")
 #'
 #' @export
 #'

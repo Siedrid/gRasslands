@@ -7,7 +7,7 @@
 acq_date(acq)
 }
 \arguments{
-\item{acq}{path to the S2 acquisition}
+\item{acq}{path to the S2 acquisition folder.}
 }
 \value{
 A date string of the S-2 acquisition.

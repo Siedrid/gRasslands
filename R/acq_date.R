@@ -2,7 +2,7 @@
 #'
 #' `acq_date` returns Date of the Sentinel-2 Acquisition.
 #'
-#' @param acq path to the S2 acquisition
+#' @param acq path to the S2 acquisition folder.
 #'
 #' @return A date string of the S-2 acquisition.
 #' @examples

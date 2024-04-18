@@ -60,5 +60,5 @@ for (y_str in c("2022", "2023")){
 }
 
 refl.df <- wb_to_df(wb_path)
-write.csv(refl.df, "data-raw/S2_reflectances_BT_plot_center-2022_23.csv", row.names = F) #run
+write.csv(refl.df, "data-raw/refl.df.csv", row.names = F) #run
 usethis::use_data(refl.df, overwrite = TRUE, compress = 'xz')

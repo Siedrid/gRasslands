@@ -1,11 +1,11 @@
 #' Interpolate S-2 Time Series
 #'
-#' `interpolate.ts` interpolates missing values in the dataframe.
+#' `interpolate.ts` interpolates missing values in the data frame.
 #'
-#' @param df dataframe with the plot reflectance.
+#' @param df data frame with the plot reflectance.
 #' @param plot.column name of the column storing the plot names.
 #'
-#' @return A dataframe with columns S-2 bands and acquisition date, with interpolated NA values.
+#' @return A data frame with columns S-2 bands and acquisition date, with interpolated NA values.
 #'
 #' @export
 

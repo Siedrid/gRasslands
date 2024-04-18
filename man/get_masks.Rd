@@ -7,10 +7,10 @@
 get_masks(acq)
 }
 \arguments{
-\item{acq}{path to the S2 acquisition}
+\item{acq}{path to the S2 acquisition folder.}
 }
 \value{
-A character vector of path to the two masks for the 10m and 20m bands.
+A character vector of the paths to the two masks for the 10m and 20m bands.
 }
 \description{
 \code{get_masks} returns the Sentinel-2 masks to mask clouds etc. from the satellite image.

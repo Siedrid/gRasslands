@@ -3,7 +3,7 @@
 #' `plt.varimp` summarizes the variable importance in four plots, by grouping the variables and suming the importance
 #' by A) Band, B) Year, D) Month and by visualizing the 15 most important variables.
 #'
-#' @param forest Ranom Forest Train Object.
+#' @param forest Random Forest Train Object.
 #'
 #' @return A ggplot with four subplots.
 #'

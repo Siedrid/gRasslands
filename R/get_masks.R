@@ -2,9 +2,9 @@
 #'
 #' `get_masks` returns the Sentinel-2 masks to mask clouds etc. from the satellite image.
 #'
-#' @param acq path to the S2 acquisition
+#' @param acq path to the S2 acquisition folder.
 #'
-#' @return A character vector of path to the two masks for the 10m and 20m bands.
+#' @return A character vector of the paths to the two masks for the 10m and 20m bands.
 #' @examples
 #'
 #' acquisitions <- get_acquisitions("2022", "04", "E:/Grasslands_BioDiv/Data/SatData/")

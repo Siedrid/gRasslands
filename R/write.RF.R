@@ -11,7 +11,7 @@
 #' @param csv.path path to the csv file, which should be created or already exists.
 #'
 #' @return A data frame with the columns: Predictors (= which months were used, which compositing method),
-#' Resp_var (= alpha diversity indice used for the prediction), seed, R2, RMSE, stdev, var1, var2, var3 (= the three most important predictors).
+#' Resp_var (= alpha diversity index used for the prediction), seed, R2, RMSE, stdev, var1, var2, var3 (= the three most important predictors).
 #'
 #' @export
 

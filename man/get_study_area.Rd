@@ -20,7 +20,6 @@ A bounding box (sf object) of the study area.
 \code{get_study_area} gives the study area to crop the Sentinel-2 bands, coordinates should be in Gauss-Kruger Projection (epsg code: ...)
 }
 \examples{
-df <- readxl::read_excel(path = "E:/Grasslands_BioDiv/Data/Field_Data/SUSALPS_samplingData_BT-RB-FE_2022-2023.xlsx")
-study_area <- get_study_area(df, "PlotCenter_x_coord", "PlotCenter_y_coord")
+study_area <- get_study_area(div.df, "X", "Y")
 
 }

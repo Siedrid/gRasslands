@@ -2,7 +2,7 @@
 % Please edit documentation in R/pivot.df.R
 \name{pivot.df}
 \alias{pivot.df}
-\title{Pivots data frame to format needed for Random Forest.}
+\title{Pivots data frame to wide table format needed for Random Forest.}
 \usage{
 pivot.df(df, days_since_cut = F)
 }
@@ -12,7 +12,7 @@ pivot.df(df, days_since_cut = F)
 \item{days_since_cut}{predictor days_since_cut to be included (T/F)}
 }
 \value{
-A dataframe of monthly S-2 reflectances.
+A data frame of monthly S-2 reflectances.
 }
 \description{
 \code{pivot.df} pivots the monthly S-2 data frame.

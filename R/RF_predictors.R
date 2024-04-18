@@ -3,7 +3,7 @@
 #' `RF_predictors` slices the monthly Sentinel-2 reflectance data frame to the desired months.
 #'
 #' @param data_frame monthly S-2 reflectance data frame.
-#' @param m_lst vector of the months to be used in the prediction.
+#' @param m_lst vector of the months to be used in the prediction, e.g. c(3:9) for March until September.
 #'
 #' @return A data frame.
 #'
@@ -11,7 +11,8 @@
 
 RF_predictors <- function(data_frame, m_lst){
   idx.lst <- c()
-  for (m in m_lst){
+  m_str <- paste0(sprintf("%02d", m_lst), "$")
+  for (m in m_str){
     idx <- grep(m, colnames(data_frame))
     idx.lst <- append(idx.lst, idx)
   }

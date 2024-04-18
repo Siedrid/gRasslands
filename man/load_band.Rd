@@ -7,17 +7,17 @@
 load_band(band, acq, m, study_area)
 }
 \arguments{
-\item{band}{Sentinel-2 band (character)}
+\item{band}{Sentinel-2 band (character), e.g. "B3".}
 
-\item{acq}{path to the S2 acquisition}
+\item{acq}{path to the S-2 acquisition}
 
 \item{m}{SpatialRaster of corresponding mask in matching spatial resolution}
 
 \item{study_area}{sf object of bounding box of study area}
 }
 \value{
-A character vector of path to the two masks for the 10m and 20m bands.
+SpatRaster of the S-2 reflectances in the study area.
 }
 \description{
-\code{load_band} returns the Sentinel-2 masks to mask clouds etc. from the satellite image.
+\code{load_band} returns the Sentinel-2 band, cloud masked and with the reflectance as the pixel values.
 }
