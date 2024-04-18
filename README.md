@@ -84,8 +84,8 @@ forest model.
 ``` r
 int.ts <- interpolate.ts(refl.df, plot.column = "plot_names") # interpolate missing values
 int.ts <- na.omit(int.ts)
-monthly_max.df <- comp_monthly(int.ts, date.column = "dat", stat = "min") # composite to monthly maximum reflectances
-monthly_max.df.piv <- pivot.df(monthly_max.df) # pivot the data into wide table
+monthly_min.df <- comp_monthly(int.ts, date.column = "dat", stat = "min") # composite to monthly minimum reflectances
+monthly_min.df.piv <- pivot.df(monthly_min.df) # pivot the data into wide table
 ```
 
 In the next step we take a look at the response variable: the
@@ -127,15 +127,16 @@ plt.band_composite(acq, bands = c("B2", "B3", "B4"), study_area, df = div.df, ad
 
     #> NULL
 
-The alpha diversity indices used are the species number, shannon and
-simpson index. Many studies have shown, that species number is the best
-response variable, therefore this alpha-diversity indice will be used in
-the following random forest model. The code to calculate these indices
-is provided in the `data-raw` folder.
+The alpha diversity indices calculated and provided in the `div.df` data
+frame are the species number, shannon and simpson index. Many studies
+have shown, that species number is the best response variable, therefore
+this alpha-diversity indice will be used in the following random forest
+model. The code to calculate these indices is provided in the `data-raw`
+folder in the div.df.R script.
 
 ## II. Train and Test Random Forest
 
-For the training, only the maximum reflectances from the months March to
+For the training, only the minimum reflectances from the months March to
 September are used. The winter months are influenced by clouds and snow
 and are limited by less plant growth/cover, which could potentially
 impact our results negatively.
@@ -144,8 +145,8 @@ impact our results negatively.
 s = 91
 biodiv_ind = "specn"
 
-m.nowinter <- c("03$", "04$", "05$", "06$","07$", "08$", "09$")
-data_frame.nowinter <- RF_predictors(monthly_max.df.piv, m.nowinter) # use only months from March to September
+m.nowinter <- c(3:9)
+data_frame.nowinter <- RF_predictors(monthly_min.df.piv, m.nowinter) # use only months from March to September
 rf_data <- preprocess_rf_data(data_frame.nowinter, div.df, biodiv_ind) # merge reflectance and alpha diversity dataframe
 
 train_index <- get_train_index(rf_data, s = s) # split samples into training and testing (70:30)
@@ -213,34 +214,45 @@ plt.varimp(forest)
 <img src="man/figures/README-Variable Importance-1.png" width="70%" />
 
 `plt.varimp` is an important function to evaluate the predictors
-according to their band, year and month. The SWIR bands and B4 and B5
-are the most important Sentinel-2 bands (A). March is by far the most
-important month in the prediction (D).
+according to their band, year and month. The SWIR bands and the bands in
+the visible domain are the most important Sentinel-2 bands (A). March is
+by far the most important month in the prediction (D).
 
 ## III. Spatial Prediction of Alpha-Diversity
 
 For the spatial prediction, all variables, that trained the random
 forest, need to be stacked to a spatial Raster, on which the species
 number can be predicted. In the case of the random forest trained with
-all summer months, the monthly maximum raster composites of all
+all summer months, the monthly minimum raster composites of all
 acquisitions from March until September 2022 and 2023 respectively need
 to be calculated first. Due to the limited storage capacity, these
 raster composites can’t be part of this package. The code to calculate
-these raster composites is provided in the `data-raw` folder. On
-request, we can make these composites available. The code to calculate
-spatial predictions is provided in the following.
+these raster composites is provided in the `data-raw` folder in the
+`comp.S2.bands.R` script. On request, we can make these composites
+available. The code to calculate spatial prediction maps is provided in
+the following.
 
 ``` r
 
-# select months as predictors 
-m <- c("03.tif", "04.tif", "05.tif", "06.tif","07.tif", "08.tif", "09.tif")
+# select months March to September as predictors 
 comp_path <- "E:/Grasslands_BioDiv/Data/S2_min_composites"
-fls <- list_comp_months(comp_path, m)
+fls <- list_comp_months(comp_path, m.nowinter)
 
-max.brick <- stack_S2_months(fls, comp_path)
+min.brick <- stack_S2_months(fls)
 
-s2_pred <- terra::predict(max.brick, model = forest, na.rm = T)
+s2_pred <- terra::predict(min.brick, model = forest, na.rm = T)
+```
 
+`comp_path` is the path to the directory, where the monthly raster
+composites are stored. After creating a list of these raster composites,
+the rasters are stacked with the terra package and then transformed into
+a brick object. With `predict`, the random forest model `forest` is
+applied to the brick. To mask non-grasslands, we used the High
+Resolution Grassland Layer, provided by Copernicus
+(<https://land.copernicus.eu/en/products/high-resolution-layer-grassland>).
+We used the 2018 product with a 10m spatial resolution:
+
+``` r
 # Mask non-Grasslands with Copernicus Grassland Layer
 grass.mask.path <- "E:/Grasslands_BioDiv/Data/Copernicus_Grassland/GRA_2018_010m_03035_V1_0.tif"
 grass.mask <- terra::rast(grass.mask.path)
@@ -251,13 +263,7 @@ s2_pred.masked <- mask.grasslands(s2_pred, grass.mask)
 plt.diversity(s2_pred.masked, biodiv_ind = "specn")
 ```
 
-<img src="man/figures/README-Spatial Prediction Preprocessing-1.png" width="70%" />
-
-`comp_path` is the path to the directory, where the monthly raster
-composites are stored. After creating a list of these raster composites,
-the rasters are stacked with the terra package and then transformed into
-a brick object. With `predict`, the random forest model `forest` is
-applied to the brick.
+<img src="man/figures/README-unnamed-chunk-2-1.png" width="70%" />
 
 ## IV. Further Resources
 
@@ -270,8 +276,6 @@ is an important step towards a broader understanding of grassland sites,
 how to manage them and protect their valuable ecosystem services.
 
 <img src="man/figures/GrasslandsBiodiv_Flowchart.drawio.png" alt="Analysis Workflow" style="width: 400px;"/>
-
-### Literature:
 
 ### Contact Details:
 

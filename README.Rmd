@@ -48,8 +48,8 @@ Reflectances at the plot locations and in each Sentinel-2 band from 2022 to 2023
 ```{r refl.df 2}
 int.ts <- interpolate.ts(refl.df, plot.column = "plot_names") # interpolate missing values
 int.ts <- na.omit(int.ts)
-monthly_max.df <- comp_monthly(int.ts, date.column = "dat", stat = "min") # composite to monthly maximum reflectances
-monthly_max.df.piv <- pivot.df(monthly_max.df) # pivot the data into wide table
+monthly_min.df <- comp_monthly(int.ts, date.column = "dat", stat = "min") # composite to monthly minimum reflectances
+monthly_min.df.piv <- pivot.df(monthly_min.df) # pivot the data into wide table
 
 ```
 
@@ -73,14 +73,14 @@ The alpha diversity indices calculated and provided in the `div.df` data frame a
 
 ## II. Train and Test Random Forest
 
-For the training, only the maximum reflectances from the months March to September are used. The winter months are influenced by clouds and snow and are limited by less plant growth/cover, which could potentially impact our results negatively.
+For the training, only the minimum reflectances from the months March to September are used. The winter months are influenced by clouds and snow and are limited by less plant growth/cover, which could potentially impact our results negatively.
 
 ```{r Random Forest}
 s = 91
 biodiv_ind = "specn"
 
 m.nowinter <- c(3:9)
-data_frame.nowinter <- RF_predictors(monthly_max.df.piv, m.nowinter) # use only months from March to September
+data_frame.nowinter <- RF_predictors(monthly_min.df.piv, m.nowinter) # use only months from March to September
 rf_data <- preprocess_rf_data(data_frame.nowinter, div.df, biodiv_ind) # merge reflectance and alpha diversity dataframe
 
 train_index <- get_train_index(rf_data, s = s) # split samples into training and testing (70:30)
@@ -109,7 +109,7 @@ plt.varimp(forest)
 
 ## III. Spatial Prediction of Alpha-Diversity
 
-For the spatial prediction, all variables, that trained the random forest, need to be stacked to a spatial Raster, on which the species number can be predicted. In the case of the random forest trained with all summer months, the monthly maximum raster composites of all acquisitions from March until September 2022 and 2023 respectively need to be calculated first. Due to the limited storage capacity, these raster composites can't be part of this package. The code to calculate these raster composites is provided in the `data-raw` folder in the `comp.S2.bands.R` script. On request, we can make these composites available. The code to calculate spatial prediction maps is provided in the following.
+For the spatial prediction, all variables, that trained the random forest, need to be stacked to a spatial Raster, on which the species number can be predicted. In the case of the random forest trained with all summer months, the monthly minimum raster composites of all acquisitions from March until September 2022 and 2023 respectively need to be calculated first. Due to the limited storage capacity, these raster composites can't be part of this package. The code to calculate these raster composites is provided in the `data-raw` folder in the `comp.S2.bands.R` script. On request, we can make these composites available. The code to calculate spatial prediction maps is provided in the following.
 
 ```{r Spatial Prediction Preprocessing}
 
@@ -117,9 +117,9 @@ For the spatial prediction, all variables, that trained the random forest, need 
 comp_path <- "E:/Grasslands_BioDiv/Data/S2_min_composites"
 fls <- list_comp_months(comp_path, m.nowinter)
 
-max.brick <- stack_S2_months(fls, comp_path)
+min.brick <- stack_S2_months(fls)
 
-s2_pred <- terra::predict(max.brick, model = forest, na.rm = T)
+s2_pred <- terra::predict(min.brick, model = forest, na.rm = T)
 ```
 
 `comp_path` is the path to the directory, where the monthly raster composites are stored. After creating a list of these raster composites, the rasters are stacked with the terra package and then transformed into a brick object. With `predict`, the random forest model `forest` is applied to the brick.
