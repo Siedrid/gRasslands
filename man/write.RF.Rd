@@ -19,7 +19,7 @@ write.RF(pred, biodiv_idx, forest, s, csv.path)
 }
 \value{
 A data frame with the columns: Predictors (= which months were used, which compositing method),
-Resp_var (= alpha diversity indice used for the prediction), seed, R2, RMSE, stdev, var1, var2, var3 (= the three most important predictors).
+Resp_var (= alpha diversity index used for the prediction), seed, R2, RMSE, stdev, var1, var2, var3 (= the three most important predictors).
 }
 \description{
 \code{write.RF} saves the prediction results from the Random Forest model to a csv file.

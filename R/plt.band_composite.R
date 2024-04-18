@@ -10,11 +10,6 @@
 #'
 #' @return A map of the study area, optionally with the plot locations.
 #'
-#' @examples
-#' bands <- c("B2", "B3", "B4")
-#' acq <- get_acquisitions("2022", "04", "E:/Grasslands_Biodiv/Data/SatData/")[1]
-#' plt.band_composite(acq, bands)
-#'
 #' @export
 
 

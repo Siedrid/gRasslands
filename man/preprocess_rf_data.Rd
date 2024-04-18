@@ -18,5 +18,5 @@ shannon (= shannon index) or simpson (= simpson index)}
 A data frame of the monthly Sentinel-2 Reflectances merged with the alpha diversity at plot locations. Ready to train the Random Forest.
 }
 \description{
-\code{preprocess_rf_data} returns dataframe ready for training and testing the random forest model
+\code{preprocess_rf_data} returns data frame ready for training and testing the random forest model
 }

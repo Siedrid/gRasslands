@@ -2,7 +2,7 @@
 % Please edit documentation in R/wb_to_df.R
 \name{wb_to_df}
 \alias{wb_to_df}
-\title{Convert Workbook to Dataframe}
+\title{Convert Excel Workbook to data frame}
 \usage{
 wb_to_df(wb_path)
 }
@@ -10,14 +10,8 @@ wb_to_df(wb_path)
 \item{wb_path}{path to the excel workbook.}
 }
 \value{
-A dataframe with columns S-2 bands and acquisition date.
+A data frame with S-2 bands and acquisition date as columns.
 }
 \description{
 \code{wb_to_df} converts the excel workbook containing the plot reflectances into a dataframe.
-}
-\examples{
-
-wb_path <- "E:/Grasslands_BioDiv/Data/S2_Reflectances/reflectances_plot_center-v1.xlsx"
-refl.df <- wb_to_df(wb_path)
-
 }

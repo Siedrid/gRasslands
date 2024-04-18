@@ -7,7 +7,7 @@
 plt.varimp(forest)
 }
 \arguments{
-\item{forest}{Ranom Forest Train Object.}
+\item{forest}{Random Forest Train Object.}
 }
 \value{
 A ggplot with four subplots.

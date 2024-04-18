@@ -4,23 +4,14 @@
 \alias{stack_S2_months}
 \title{Stack monthly raster composites}
 \usage{
-stack_S2_months(fls, path)
+stack_S2_months(fls)
 }
 \arguments{
-\item{fls}{string, indicating the year of the acquisitions}
-
-\item{path}{string, indicating the year of the acquisitions}
-
-\item{filename}{string, indicating the month, two characters, e.g. "01","02",..., "12"}
+\item{fls}{vector of paths to the monthly raster composites which should be stacked.}
 }
 \value{
-A character vector of the acquisiton paths for a specific year and month, used to load S2 masks and bands.
+A raster brick object with monthly band composites as layers, e.g. B12_2022.04
 }
 \description{
 \code{stack_S2_months} returns the stack of monthly raster composites for the spatial predicition.
-}
-\examples{
-
-acquisitions <- get_acquisitions("2022", "04", "E:/Grasslands_BioDiv/Data/SatData/")
-
 }

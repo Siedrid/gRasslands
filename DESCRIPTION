@@ -4,7 +4,9 @@ Version: 0.0.0.9000
 Authors@R: 
     person("Laura", "Obrecht", , "laura.obrecht@gmx.de", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+Description: A workflow to combine species richness data with multi-temporal Sentinel-2 reflectances.
+    With provided data, floral biodiversity in Franconian Grasslands can be predicted via a random forest model. 
+    We want to encourage, using data from other locations, to get a broader understanding about biodiversity in grasslands.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

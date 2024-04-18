@@ -11,11 +11,11 @@ to_wb(path, date, df)
 
 \item{date}{date of the S-2 Acquisition}
 
-\item{df}{dataframe with extracted reflectances}
+\item{df}{data frame with extracted reflectances at plot locations.}
 }
 \value{
 An Excel Workbook with the Acquisition date as sheet name, storing the Plot Reflectances.
 }
 \description{
-\code{acq_date} returns Date of the Sentinel-2 Acquisition.
+\code{to_wb} writes reflectances from data frame into a new excel workbook sheet.
 }

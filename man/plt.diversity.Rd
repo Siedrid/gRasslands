@@ -7,7 +7,7 @@
 plt.diversity(rst, biodiv_ind)
 }
 \arguments{
-\item{rst}{spatial raster (terra) with the masked species richness in grasslands}
+\item{rst}{spatial raster (terra) with the masked species richness in grasslands.}
 
 \item{biodiv_ind}{Alpha diversity indice which was predicted in rst.}
 }
