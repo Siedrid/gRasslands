@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-`gRasslands` is part of the SUSALPS research project (https://www.susalps.de/en/), which is researching the sustainable use of alpine and pre-alpine grasslands in Southern Germany. A key indicator of ecosystem health is the floral biodiversity, which can be measured through indices like the species number or the shannon and simpson index (webpage with explanation?). The goal of this project was to estimate floral diversity at the help of Sentinel-2 reflectances between 2022 and 2023.
+`gRasslands` is part of the SUSALPS research project (https://www.susalps.de/en/), which is researching the sustainable use of alpine and pre-alpine grasslands in Southern Germany. A key indicator of ecosystem health is the floral biodiversity, which can be measured through indices like the species number or the shannon and simpson index. The goal of this project was to estimate floral diversity at the help of Sentinel-2 reflectances between 2022 and 2023.
 This package provides the functions and code used to train a random forest model with the extracted reflectances at the sample plot locations. Species inventories sampled in the same plots served as response variable.
 Parts of the data are also available through this package.
 
@@ -53,6 +53,7 @@ monthly_min.df.piv <- pivot.df(monthly_min.df) # pivot the data into wide table
 
 ```
 
+For the compositing, the monthly minimum reflectances were used, to create an evenly distributed time series. We also found out, that the minimum reflectance fits the best for the biodiversity modeling.
 In the next step we take a look at the response variable: the alpha-diversity indices. Species inventories were collected in the same 60 plots in May 2022 and April 2023. Both datasets are processed together in step II. With `get_cover`, the cloud cover, i.e. the percentage of the masked area of one acquisition inside the study area is returned. With `plt.band_composite`, an RGB band composite of the study area can be plotted and the plot locations added.
 
 ```{r div.df}
@@ -64,11 +65,12 @@ div.sf <- div2sf(div.df, x.column = "X", y.column = "Y", epsg.code = 25832, writ
 acq <- get_acquisitions("2022", "04", "E:/Grasslands_Biodiv/Data/SatData/")[1]
 cloud_cover <- get_cover(acq, study_area) # calculate cloud cover
 
-plt.band_composite(acq, bands = c("B2", "B3", "B4"), study_area, df = div.df, add.plots = T)
+plt.band_composite(acq, bands = c("B4", "B3", "B2"), study_area, df = div.df, add.plots = T)
 
 ```
 
-The alpha diversity indices calculated and provided in the `div.df` data frame are the species number, shannon and simpson index. Many studies have shown, that species number is the best response variable, therefore this alpha-diversity indice will be used in the following random forest model. The code to calculate these indices is provided in the `data-raw` folder in the div.df.R script.
+In the eastern part of the study area, an area of almost 10% is masked. The function `get_cover` can also be used to filter suitable acquisitions.
+The alpha diversity indices calculated and provided in the `div.df` data frame are the species number, shannon and simpson index. Many studies have shown, that the species number is the best response variable, therefore this alpha-diversity index will be used in the following random forest model. The code to calculate these indices is provided in the `data-raw` folder in the div.df.R script.
 
 
 ## II. Train and Test Random Forest
