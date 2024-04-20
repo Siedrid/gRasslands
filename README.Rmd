@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-`gRasslands` is part of the SUSALPS research project (https://www.susalps.de/en/), which is researching the sustainable use of alpine and pre-alpine grasslands in Southern Germany. A key indicator of ecosystem health is the floral biodiversity, which can be measured through indices like the species number or the shannon and simpson index. The goal of this project was to estimate floral diversity at the help of Sentinel-2 reflectances between 2022 and 2023.
+`gRasslands` is part of the [SUSALPS research project](https://www.susalps.de/en/), which is researching the sustainable use of alpine and pre-alpine grasslands in Southern Germany. A key indicator of ecosystem health is the floral biodiversity, which can be measured through indices like the species number or the shannon and simpson index. The goal of this project was to estimate floral diversity with the help of Sentinel-2 reflectances between 2022 and 2023.
 This package provides the functions and code used to train a random forest model with the extracted reflectances at the sample plot locations. Species inventories sampled in the same plots served as response variable.
 Parts of the data are also available through this package.
 
@@ -33,7 +33,7 @@ devtools::install_github("Siedrid/gRasslands")
 
 ## I. Data Preprocessing
 
-In this section you find documentation how your data needs to be preprocessed to train your random forest model. This is shown at the hand of Sentinel-2 surface reflectances extracted at 60 plot locations in Lower Franconia, Bavaria. The Sentinel-2 scenes were atmospherically corrected using the MAJA processor (https://www.cesbio.cnrs.fr/maja/). For some areas Sentinel-2 L2A products (MAJA preprocessed) are freely distributed on the THEIA portal: https://theia.cnes.fr/atdistrib/rocket/#/search?collection=SENTINEL2
+In this section you find documentation how your data needs to be preprocessed to train your random forest model. This is shown by means of Sentinel-2 surface reflectances extracted at 60 plot locations in Lower Franconia, Bavaria. The Sentinel-2 scenes were atmospherically corrected using the [MAJA processor](https://www.cesbio.cnrs.fr/maja/). For some areas Sentinel-2 L2A products (MAJA preprocessed) are freely distributed on the [THEIA portal](https://theia.cnes.fr/atdistrib/rocket/#/search?collection=SENTINEL2).
 Of course, also the Sentinel-2 L2A products distributed via the Copernicus Browser or the Google Earth Engine are suitable for this analysis.
 
 ```{r refl.df}
@@ -125,7 +125,7 @@ s2_pred <- terra::predict(min.brick, model = forest, na.rm = T)
 ```
 
 `comp_path` is the path to the directory, where the monthly raster composites are stored. After creating a list of these raster composites, the rasters are stacked with the terra package and then transformed into a brick object. With `predict`, the random forest model `forest` is applied to the brick.
-To mask non-grasslands, we used the High Resolution Grassland Layer, provided by Copernicus (https://land.copernicus.eu/en/products/high-resolution-layer-grassland). We used the 2018 product with a 10m spatial resolution:
+To mask non-grasslands, we used the High Resolution Grassland Layer, provided by [Copernicus](https://land.copernicus.eu/en/products/high-resolution-layer-grassland). We used the 2018 product with a 10m spatial resolution:
 
 ```{r}
 # Mask non-Grasslands with Copernicus Grassland Layer
