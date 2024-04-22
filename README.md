@@ -137,7 +137,10 @@ acquisitions. The alpha diversity indices calculated and provided in the
 Many studies have shown, that the species number is the best response
 variable, therefore this alpha-diversity index will be used in the
 following random forest model. The code to calculate these indices is
-provided in the `data-raw` folder in the div.df.R script.
+provided in the `data-raw` folder in the div.df.R script. The values for
+the diversity indices were randomized in the end for data privacy
+reasons. That’s why we have to expect rather low accuracies for the
+model.
 
 ## II. Train and Test Random Forest
 
@@ -204,12 +207,9 @@ RF.summary(forest, rf_data, div.df, train_index, "specn", plot_labels = F) # ret
 #write.RF("no winter", "specn", forest, 10, csv.path)
 ```
 
-Species Numbers between 20 and 40 have the highest accuracy. Lower and
-higher species numbers are over and underestimated, respecitively, due
-to the limited sample number with these numbers. The R2 is given for the
-training and testing split. The testing split was not used to train the
-random forest model. With `plot_labels = T`, the points are labeled
-according to their plot names.
+The R2 is given for the training and testing split. The testing split
+was not used to train the random forest model. With `plot_labels = T`,
+the points are labeled according to their plot names.
 
 ``` r
 
@@ -219,9 +219,10 @@ plt.varimp(forest)
 <img src="man/figures/README-Variable Importance-1.png" width="70%" />
 
 `plt.varimp` is an important function to evaluate the predictors
-according to their band, year and month. The SWIR bands and the bands in
-the visible domain are the most important Sentinel-2 bands (A). March is
-by far the most important month in the prediction (D).
+according to their band, year and month. With the original data, the
+SWIR bands and the bands in the visible domain are the most important
+Sentinel-2 bands (A). March is by far the most important month in the
+prediction (D).
 
 ## III. Spatial Prediction of Alpha-Diversity
 
