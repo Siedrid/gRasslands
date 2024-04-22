@@ -6,17 +6,18 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-`gRasslands` is part of the SUSALPS research project
-(<https://www.susalps.de/en/>), which is researching the sustainable use
-of alpine and pre-alpine grasslands in Southern Germany. A key indicator
-of ecosystem health is the floral biodiversity, which can be measured
-through indices like the species number or the shannon and simpson
-index. The goal of this project was to estimate floral diversity at the
-help of Sentinel-2 reflectances between 2022 and 2023. This package
-provides the functions and code used to train a random forest model with
-the extracted reflectances at the sample plot locations. Species
-inventories sampled in the same plots served as response variable. Parts
-of the data are also available through this package.
+`gRasslands` is part of the [SUSALPS research
+project](https://www.susalps.de/en/), which is researching the
+sustainable use of alpine and pre-alpine grasslands in Southern Germany.
+A key indicator of ecosystem health is the floral biodiversity, which
+can be measured through indices like the species number or the shannon
+and simpson index. The goal of this project was to estimate floral
+diversity with the help of Sentinel-2 reflectances between 2022 and
+2023. This package provides the functions and code used to train a
+random forest model with the extracted reflectances at the sample plot
+locations. Species inventories sampled in the same plots served as
+response variable. Parts of the data are also available through this
+package.
 
 ## 0. Installation
 
@@ -29,13 +30,13 @@ devtools::install_github("Siedrid/gRasslands")
 ## I. Data Preprocessing
 
 In this section you find documentation how your data needs to be
-preprocessed to train your random forest model. This is shown at the
-hand of Sentinel-2 surface reflectances extracted at 60 plot locations
-in Lower Franconia, Bavaria. The Sentinel-2 scenes were atmospherically
-corrected using the MAJA processor (<https://www.cesbio.cnrs.fr/maja/>).
+preprocessed to train your random forest model. This is shown by means
+of Sentinel-2 surface reflectances extracted at 60 plot locations in
+Lower Franconia, Bavaria. The Sentinel-2 scenes were atmospherically
+corrected using the [MAJA processor](https://www.cesbio.cnrs.fr/maja/).
 For some areas Sentinel-2 L2A products (MAJA preprocessed) are freely
-distributed on the THEIA portal:
-<https://theia.cnes.fr/atdistrib/rocket/#/search?collection=SENTINEL2>
+distributed on the [THEIA
+portal](https://theia.cnes.fr/atdistrib/rocket/#/search?collection=SENTINEL2).
 Of course, also the Sentinel-2 L2A products distributed via the
 Copernicus Browser or the Google Earth Engine are suitable for this
 analysis.
@@ -100,13 +101,13 @@ plotted and the plot locations added.
 
 ``` r
 summary(div.df)
-#>   plot_names           shannon          simpson           specn      
-#>  Length:59          Min.   :0.8192   Min.   :0.2763   Min.   :15.00  
-#>  Class :character   1st Qu.:1.9472   1st Qu.:0.7213   1st Qu.:27.00  
-#>  Mode  :character   Median :2.3466   Median :0.8244   Median :32.00  
-#>                     Mean   :2.3232   Mean   :0.7852   Mean   :32.44  
-#>                     3rd Qu.:2.7362   3rd Qu.:0.8921   3rd Qu.:37.50  
-#>                     Max.   :3.5101   Max.   :0.9529   Max.   :52.00  
+#>   plot_names           shannon           simpson            specn      
+#>  Length:59          Min.   :0.02819   Min.   :0.01083   Min.   :10.12  
+#>  Class :character   1st Qu.:0.81288   1st Qu.:0.30712   1st Qu.:20.68  
+#>  Mode  :character   Median :1.74052   Median :0.46006   Median :31.15  
+#>                     Mean   :1.81174   Mean   :0.49094   Mean   :30.57  
+#>                     3rd Qu.:2.78330   3rd Qu.:0.68315   3rd Qu.:43.05  
+#>                     Max.   :3.93927   Max.   :0.99736   Max.   :49.37  
 #>        X                Y          
 #>  Min.   :677759   Min.   :5528198  
 #>  1st Qu.:678610   1st Qu.:5528541  
@@ -165,17 +166,17 @@ print(forest)
 #> 
 #> No pre-processing
 #> Resampling: Cross-Validated (10 fold, repeated 5 times) 
-#> Summary of sample sizes: 38, 38, 40, 39, 40, 38, ... 
+#> Summary of sample sizes: 38, 38, 39, 39, 40, 38, ... 
 #> Resampling results across tuning parameters:
 #> 
 #>   mtry  RMSE      Rsquared   MAE     
-#>     2   5.212698  0.7680533  4.075929
-#>    25   5.307270  0.7299904  4.297927
-#>    48   5.341733  0.7183568  4.353222
-#>    71   5.399386  0.7100851  4.409252
-#>    94   5.439054  0.7046677  4.450530
-#>   117   5.481573  0.6931790  4.479744
-#>   140   5.470326  0.7015584  4.472773
+#>     2   12.35664  0.2148993  10.89479
+#>    25   12.77095  0.2098879  11.39549
+#>    48   12.83464  0.2309922  11.44717
+#>    71   12.93177  0.2119190  11.55964
+#>    94   12.89543  0.2291998  11.52141
+#>   117   12.87095  0.2243601  11.47428
+#>   140   12.97108  0.2226513  11.54687
 #> 
 #> RMSE was used to select the optimal model using the smallest value.
 #> The final value used for the model was mtry = 2.
@@ -252,8 +253,8 @@ composites are stored. After creating a list of these raster composites,
 the rasters are stacked with the terra package and then transformed into
 a brick object. With `predict`, the random forest model `forest` is
 applied to the brick. To mask non-grasslands, we used the High
-Resolution Grassland Layer, provided by Copernicus
-(<https://land.copernicus.eu/en/products/high-resolution-layer-grassland>).
+Resolution Grassland Layer, provided by
+[Copernicus](https://land.copernicus.eu/en/products/high-resolution-layer-grassland).
 We used the 2018 product with a 10m spatial resolution:
 
 ``` r

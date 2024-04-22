@@ -91,5 +91,11 @@ center_coords$Y <- as.numeric(center_coords$Y)
 div.df <- merge(div_df, center_coords, by="plot_names")
 div.df <- na.omit(div.df)
 
+# randomize data
+div.df$shannon <- runif(nrow(div.df), min = 0, max = 4)
+div.df$simpson <- runif(nrow(div.df), min = 0, max = 1)
+div.df$specn <- runif(nrow(div.df), min = 10, max = 50)
+
+# write into package structure
 write.csv(div.df, "data-raw/div.df.csv", row.names = F)
 usethis::use_data(div.df, overwrite = TRUE, compress = "xz")
